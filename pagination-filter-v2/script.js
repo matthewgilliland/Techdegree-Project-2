@@ -1,0 +1,54 @@
+/*jshint esversion: 6 */
+/*
+* Welcome to my Pagination & Content Filter project!
+* I'm shooting for "Exceeds Expectations."
+* Thanks for your time!
+*/
+
+// Global variables: Student list, # of items, # of pages, pagination div, search bar
+let studentList = $('.student-list').children();
+let itemCount = 10;
+let pageCount = Math.ceil(studentList.length/itemCount);
+let pagination = $('.pagination');
+let searchBar = '<div class="student-search"><input type="text" placeholder="Search for students..."><button>Search</button><div>';
+
+// Function to add page links
+function addPages() {
+  let ul = $('<ul></ul>'); // Adds the ul tags
+  for (let i = 1; i <= pageCount; i++) { // Loops to create each link
+    let listLink = $('<li><a href="#" class="pageLink">' + i + '</a></li>'); // Produces link html
+    $(ul).append(listLink); // Adds link to list
+    pagination.append(ul); // Displays links to page
+  }
+}
+
+addPages();
+
+// Function to show students by page number
+function showPage(x) {
+  $(studentList).hide(); // Hides initial list of all students
+  for (let i = 0; i < studentList.length; i++) { // Loops to check for right range
+    if (i < x * itemCount && i + 1 > (x - 1) * itemCount) {
+      $(studentList[i]).show(); // Shows students in correct number range
+    }
+  }
+}
+
+// Event listener for showing chosen page
+
+$('.pageLink').click(function() { // Listens for click on page links
+  let pageNumber = event.target.textContent; // Assigns range to function by page
+  showPage(pageNumber); // Calls function for that page number
+});
+
+// Search function
+
+
+
+// Add search bar via JavaScript
+
+$('.page-header').append(searchBar); // Adds unobtrusive search bar
+
+// Show page 1 on site load
+
+showPage(1); // Shows default page (1) on page load
