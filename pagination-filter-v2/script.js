@@ -5,21 +5,25 @@
 * Thanks for your time!
 */
 
-// Global variables: Student list, # of items, # of pages, pagination div
+// Global variables: Student list, # of items, # of pages
 let studentList = $('.student-list').children();
 let itemCount = 10;
 let pageCount;
-let pagination = $('.pagination');
 
 // Global variables 2: Search bar, search result variable, name/email selection
-let searchBar = '<div class="student-search"><input id="search-input" type="text" placeholder="Search for students..."><button id="search-button">Search</button><div>';
+let searchBar = '<div class="student-search"><input id="search-input" type="text" placeholder="Search for students..."><button id="search-button">Search/Reset</button><div>';
 let searchResult;
 let currentList = studentList;
 let names = $('h3');
 let emails = $('.email');
 
+// Add pagination div to html
+$('.page').append('<div class="pagination"></div>');
+
+let pagination = $('.pagination'); // add pagination variable
+
 // Function to add page links
-function addPages(x) {
+function addPages() {
   let ul = $('<ul></ul>'); // Adds the ul tags
   let currentLength = currentList.length;
   let pageCount = Math.ceil(currentLength/itemCount); // Calculates page amount based on current list
@@ -30,20 +34,20 @@ function addPages(x) {
   }
   $('.pageLink').click(function() { // Listens for click on page links
     let pageNumber = event.target.textContent; // Assigns range to function by page
-    showPage(pageNumber, x); // Calls function for that page and current list
+    showPage(pageNumber, currentList); // Calls function for that page and current list
   });
 }
 
 // Function to show students by page number
-function showPage(x, y) { // Takes arguments for page number and source list
+function showPage(pageNumber, listName) { // Takes arguments for page number and source list
   $(studentList).hide(); // Hides initial list of all students
-  let currentLength = y.length;
+  let currentLength = listName.length;
   for (let i = 0; i < currentLength; i++) { // Loops to check for right range
-    if (i < x * itemCount && i + 1 > (x - 1) * itemCount) {
-      $(y[i]).show(); // Shows students in correct number range
+    if (i < pageNumber * itemCount && i + 1 > (pageNumber - 1) * itemCount) {
+      $(listName[i]).show(); // Shows students in correct number range
     }
   }
-  currentList = y; // Sets current list so addPages knows how many pages to make
+  currentList = listName; // Sets current list so addPages knows how many pages to make
 }
 
 // Show page 1 on site load
@@ -67,18 +71,18 @@ function searchList() {
   if (searchResult.length === 0) {
     $(studentList).hide(); // Hides initial list of all students
     $('.sorry').remove(); // Removes previous failed search, if present
-    $('.page-header').append('<div class="sorry"><p><strong></strong>Sorry, no results found!</p></div>');
+    $('.page').append('<div class="sorry"><p>Sorry, no results found!</p></div>');
   } else if (searchResult.length <= 10) {
     $('.sorry').remove(); // Removes previous failed search, if present
     $(studentList).hide(); // Hides initial list of all students
-    showPage(1, searchResult);
+    showPage(1, searchResult); // Shows results
   } else {
     $('.sorry').remove(); // Removes previous failed search, if present
     $(studentList).hide(); // Hides initial list of all students
-    showPage(1, searchResult);
-    addPages();
+    showPage(1, searchResult); // Shows results
+    addPages(); // Adds pagination
   }
-  document.getElementById('search-input').value = '';
+  document.getElementById('search-input').value = ''; // Clears search field
 }
 
 // Event listener for search button
@@ -86,6 +90,13 @@ $('#search-button').click(function() {
   searchList();
 });
 
+// Event listener for enter key in search input
+$('#search-input').keyup(function() {
+  if (13 == event.keyCode) {
+    searchList();
+  }
+});
 
 
-addPages(currentList); // Calls function to actually place links on the page
+
+addPages(); // Calls function to actually place links on the page
